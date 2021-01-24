@@ -1,39 +1,43 @@
 package main
 
 import (
-	"fmt"
+	_ "fmt"
 	"github.com/gdamore/tcell/v2"
+	"log"
 	"os"
 	"time"
 )
 
-type ExitSplash struct {
-	Style    tcell.Style
-	Note     string
-	Lifetime time.Duration
+type Splash struct {
+	screen *tcell.Screen
+	Style  tcell.Style
+	Note   string
 }
 
-func NewSplash(base tcell.Style, bg tcell.Color, note string) *ExitSplash {
-	return &ExitSplash{
-		Style:    base.Background(bg),
-		Note:     note,
-		Lifetime: 500 * time.Millisecond,
+type TimedSplash struct {
+	Splash
+	Timeout time.Duration
+}
+
+func NewTimedSplash(base tcell.Style, bg tcell.Color, note string, t time.Duration) *TimedSplash {
+	return &TimedSplash{
+		Timeout: t,
 	}
 }
 
-func (e *ExitSplash) Show(sc tcell.Screen, splash ExitSplash) {
+func (e *Splash) Show(sc tcell.Screen, splash TimedSplash) {
 	sc.Fill('x', splash.Style)
 	sc.Show()
-	time.Sleep(splash.Lifetime)
+	time.Sleep(splash.Timeout)
 }
 
 func main() {
 	screen, err := tcell.NewScreen()
 	if err != nil {
-		fmt.Errorf("Error creating new Screen: %v", err)
+		log.Fatalf("Error creating new Screen: %v", err)
 	}
 	if err = screen.Init(); err != nil {
-		fmt.Errorf("Error initializing Screen: %v", err)
+		log.Fatalf("Error initializing Screen: %v", err)
 	}
 	// TODO callback to finish up
 	defer screen.Fini()
@@ -47,7 +51,7 @@ func main() {
 	//var screenBase tcell.Style
 	screenBase := tcell.StyleDefault
 
-	splash := NewSplash(screenBase, tcell.ColorRed, "Foopers")
+	splash := NewTimedSplash(screenBase, tcell.ColorRed, "Foopers", 200*time.Millisecond)
 
 	tick := time.Tick(100 * time.Millisecond)
 	for {
@@ -59,8 +63,6 @@ func main() {
 			// screen.Fill('x', tcell.Style{tcell.ColorGreen})
 			screen.SetContent(10, 10, 'a', []rune{}, tcell.StyleDefault)
 			screen.Show()
-		default:
-			//
 		}
 		screen.Show()
 	}
