@@ -54,14 +54,17 @@ func main() {
 	splash := NewTimedSplash(screenBase, tcell.ColorRed, "Foopers", 200*time.Millisecond)
 
 	tick := time.Tick(100 * time.Millisecond)
+	x := 0
 	for {
 		select {
 		case <-abort:
-			splash.Show(screen, *splash)
+			//splash.Show(screen, *splash)
+			x++
 			return
 		case <-tick:
 			// screen.Fill('x', tcell.Style{tcell.ColorGreen})
-			screen.SetContent(10, 10, 'a', []rune{}, tcell.StyleDefault)
+			p := screenBase.Background(tcell.ColorPurple)
+			screen.SetContent(x, 1, ' ', []rune{}, p)
 			screen.Show()
 		}
 		screen.Show()
