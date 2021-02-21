@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "fmt"
+	//"fmt"
 	"github.com/gdamore/tcell/v2"
 	"log"
 	"os"
@@ -26,9 +26,6 @@ func NewTimedSplash(base tcell.Style, bg tcell.Color, note string, t time.Durati
 }
 
 func (e *Splash) Show(sc tcell.Screen, splash TimedSplash) {
-	sc.Fill('x', splash.Style)
-	sc.Show()
-	time.Sleep(splash.Timeout)
 }
 
 func main() {
@@ -59,12 +56,20 @@ func main() {
 		select {
 		case <-abort:
 			//splash.Show(screen, *splash)
+			screen.Fill('x', splash.Style)
+			screen.Show()
+			time.Sleep(splash.Timeout)
 			x++
 			return
 		case <-tick:
-			// screen.Fill('x', tcell.Style{tcell.ColorGreen})
+			var s tcell.Style
+			s = s.Background(tcell.ColorGreen)
+			//s = tcell.Style(tcell.ColorGreen)
+			//s = s.Background(tcell.ColorGreen)
+			screen.Fill('x', s)
+			//screenBase.Background(splash)
 			p := screenBase.Background(tcell.ColorPurple)
-			screen.SetContent(x, 1, ' ', []rune{}, p)
+			screen.SetContent(x, 1, []rune{'a', 'c', 'd'}, p)
 			screen.Show()
 		}
 		screen.Show()
